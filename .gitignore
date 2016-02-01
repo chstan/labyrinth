@@ -1,0 +1,10 @@
+.DS_Store
+node_modules
+data/schema.graphql
+.idea/
+
+*.log
+
+data/schema.json
+secrets.json
+

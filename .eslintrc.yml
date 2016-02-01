@@ -1,0 +1,9 @@
+---
+  parser: babel-eslint
+  extends: airbnb
+  plugins:
+    - react
+  ecmaFeatures:
+    modules: true
+  rules:
+    react/prop-types: 0
