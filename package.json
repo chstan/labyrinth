@@ -30,6 +30,7 @@
     "react-markdown": "^1.2.3",
     "react-relay": "0.6.1",
     "sequelize": "^3.18.0",
+    "sequelize-fixtures": "^0.4.8",
     "webpack": "1.12.9",
     "webpack-dev-server": "1.14.0"
   },

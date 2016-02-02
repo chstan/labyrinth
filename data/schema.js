@@ -21,7 +21,12 @@ import Db from './database';
 * Type declarations
 */
 let userType; let chamberType; let sectionType;
+
+// Section types
 let markdownSectionType; // eslint-disable-line no-unused-vars
+let curatorValidatedAnswerSectionType; // eslint-disable-line no-unused-vars
+let numericAnswerSectionType; // eslint-disable-line no-unused-vars
+
 let chamberConnection;
 
 /**
@@ -106,13 +111,79 @@ chamberType = new GraphQLObjectType({
 sectionType = new GraphQLInterfaceType({
   name: 'Section',
   description: 'A section of a chamber, might contain description or a problem',
-  fields: {
+  fields: () => ({
     id: globalIdField(),
     kind: {
       type: GraphQLString,
+      description: 'The kind of the section, used to support section polymorphism',
       resolve: section => section.kind,
     },
-  },
+  }),
+});
+
+curatorValidatedAnswerSectionType = new GraphQLObjectType({
+  name: 'CuratorValidatedAnswerSection',
+  description: 'A section that contains a question validated by the chamber curator',
+  interfaces: [sectionType],
+  isTypeOf: section => section.kind === 'curatorValidatedSection',
+  fields: () => ({
+    id: globalIdField(),
+    name: {
+      type: GraphQLString,
+      description: 'The name of the section',
+      resolve: section => section.name,
+    },
+    kind: {
+      type: GraphQLString,
+      description: 'The kind of the section, used to support section polymorphism',
+      resolve: section => section.kind,
+    },
+    exposition: {
+      type: GraphQLString,
+      description: 'Some expository lead up information to the question itself',
+      resolve: section => section.content.exposition,
+    },
+    question: {
+      type: GraphQLString,
+      description: 'The question contained in the section',
+      resolve: section => section.content.question,
+    },
+  }),
+});
+
+numericAnswerSectionType = new GraphQLObjectType({
+  name: 'NumericAnswerSection',
+  description: 'A section that contains a question that has a numeric answer',
+  interfaces: [sectionType],
+  isTypeOf: section => section.kind === 'numericAnswerSection',
+  fields: () => ({
+    id: globalIdField(),
+    name: {
+      type: GraphQLString,
+      description: 'The name of the section',
+      resolve: section => section.name,
+    },
+    kind: {
+      type: GraphQLString,
+      description: 'The kind of the section, used to support section polymorphism',
+      resolve: section => section.kind,
+    },
+    exposition: {
+      type: GraphQLString,
+      description: 'Some expository lead up information to the question itself',
+      resolve: section => section.content.exposition,
+    },
+    question: {
+      type: GraphQLString,
+      description: 'The question contained in the section',
+      resolve: section => section.content.question,
+    },
+    answer: {
+      type: GraphQLString,
+      description: 'The answer to the question contained in the section',
+      resolve: section => section.content.answer,
+    },
+  }),
 });
 
 markdownSectionType = new GraphQLObjectType({
@@ -124,7 +195,7 @@ markdownSectionType = new GraphQLObjectType({
     id: globalIdField(),
     name: {
       type: GraphQLString,
-      description: 'The ame of the section',
+      description: 'The name of the section',
       resolve: section => section.name,
     },
     kind: {
@@ -156,7 +227,7 @@ const queryType = new GraphQLObjectType({
     viewer: {
       type: userType,
       // just a test
-      resolve: () => Db.models.user.findOne({ where: { name: 'Primary User' } }),
+      resolve: () => Db.models.user.findOne({ where: { name: 'Secondary User' } }),
     },
   }),
 });
