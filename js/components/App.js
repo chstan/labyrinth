@@ -6,11 +6,13 @@ largely serves at the prop validation. Subject to change at my whim. */
 import React from 'react';
 import Relay from 'react-relay';
 import Chamber from './Chamber';
+import LogoutForm from './Logout';
 
 class App extends React.Component {
   render() {
     return (
       <div>
+      <LogoutForm />
       <h1>Chambers you curate</h1>
       <ul>
       {this.props.viewer.curatedChambers.edges.map(

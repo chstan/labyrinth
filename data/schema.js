@@ -226,8 +226,12 @@ const queryType = new GraphQLObjectType({
     // Add your own root fields here
     viewer: {
       type: userType,
-      // just a test
-      resolve: () => Db.models.user.findOne({ where: { name: 'Secondary User' } }),
+      resolve: rootValue => {
+        if (!rootValue.currentUser) {
+          throw new Error('403 - Authorization required');
+        }
+        return rootValue.currentUser;
+      },
     },
   }),
 });

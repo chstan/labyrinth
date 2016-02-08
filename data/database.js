@@ -1,6 +1,6 @@
-const secrets = require('./../secrets.json');
-
 const Sequelize = require('sequelize');
+import bcrypt from 'bcrypt';
+import secrets from '../secrets.json';
 
 const sequelize = new Sequelize(
   secrets.database.database, secrets.database.user, secrets.database.password, {
@@ -20,6 +20,31 @@ const User = sequelize.define('user', {
   name: {
     type: Sequelize.STRING,
     allowNull: false,
+  },
+  email: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    isUnique: true,
+    validate: {
+      isEmail: true,
+    },
+  },
+  passwordHash: {
+    type: Sequelize.STRING,
+  },
+}, {
+  instanceMethods: {
+    validPassword(password) {
+      return bcrypt.compareSync(password, this.passwordHash);
+    },
+    setPassword(password) {
+      const user = this;
+      const SALT_LENGTH = 8;
+      bcrypt.hash(password, SALT_LENGTH, (err, hash) => {
+        user.passwordHash = hash;
+        user.save();
+      });
+    },
   },
 });
 
@@ -81,7 +106,9 @@ AnswerAttempt.belongsTo(AnswerSet);
 sequelize.sync({ force: true }).then(() => {
   User.create({
     name: 'Primary User',
-  }).then(primaryUser =>
+    email: 'primary@email.com',
+  }).then(primaryUser => {
+    primaryUser.setPassword('password');
     primaryUser.createCurated({
       name: 'Primary Chamber',
     }).then(primaryChamber => {
@@ -116,12 +143,15 @@ sequelize.sync({ force: true }).then(() => {
           answer: 6,
         },
       });
-    })
-  );
+    });
+  });
 
   // Make another user that acts as someone learning on the platform
   User.create({
     name: 'Secondary User',
+    email: 'secondary@email.com',
+  }).then(secondaryUser => {
+    secondaryUser.setPassword('password');
   });
 });
 
