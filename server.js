@@ -86,7 +86,10 @@ appServer.post('/revoke',
 
 // Serve the Relay app
 const compiler = webpack({
-  entry: path.resolve(__dirname, 'js', 'app.js'),
+  entry: path.resolve(__dirname, 'js', 'app.jsx'),
+  resolve: {
+    extensions: ['', '.js', '.jsx'],
+  },
   module: {
     loaders: [
       {
@@ -95,7 +98,7 @@ const compiler = webpack({
         query: {
           plugins: ['./build/babelRelayPlugin'],
         },
-        test: /\.js$/,
+        test: /\.jsx?$/,
       },
       {
         loader: 'json',
@@ -103,7 +106,7 @@ const compiler = webpack({
       },
     ],
   },
-  output: { filename: 'app.js', path: '/' },
+  output: { filename: 'app.jsx', path: '/' },
 });
 
 const webpackProxyApp = new WebpackDevServer(compiler, {

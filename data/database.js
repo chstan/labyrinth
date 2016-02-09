@@ -34,6 +34,12 @@ const User = sequelize.define('user', {
   },
 }, {
   instanceMethods: {
+    getSuggestedChambers() {
+      const user = this;
+      return sequelize.models.chamber.findAll({ where: {
+        CuratorId: { $ne: user.id },
+      } });
+    },
     validPassword(password) {
       return bcrypt.compareSync(password, this.passwordHash);
     },

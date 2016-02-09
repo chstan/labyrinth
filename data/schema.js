@@ -79,9 +79,15 @@ userType = new GraphQLObjectType({
       description: "The User's name as it appears on the site.",
       resolve: (user) => user.name,
     },
+    suggestedChambers: {
+      type: chamberConnection,
+      description: 'Chambers that might be of interest to the viewer',
+      args: connectionArgs,
+      resolve: (user, args) => connectionFromPromisedArray(user.getSuggestedChambers(), args),
+    },
     curatedChambers: {
       type: chamberConnection,
-      description: 'All chambers, attached due to viewer pattern',
+      description: 'Chambers that the viewer curates',
       args: connectionArgs,
       resolve: (user, args) => connectionFromPromisedArray(user.getCurated(), args),
     },
@@ -231,6 +237,17 @@ const queryType = new GraphQLObjectType({
           throw new Error('403 - Authorization required');
         }
         return rootValue.currentUser;
+      },
+    },
+    chamber: {
+      type: chamberType,
+      args: {
+        id: { type: GraphQLString },
+      },
+      resolve: (rootValue, args) => {
+        // TODO validation on the user
+        const id = parseInt(args.id, 10);
+        return Db.models.chamber.findOne({ where: { id } });
       },
     },
   }),
