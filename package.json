@@ -20,6 +20,7 @@
     "body-parser": "^1.14.2",
     "classnames": "2.2.1",
     "cookie-parser": "^1.4.1",
+    "css-loader": "^0.23.1",
     "express": "4.13.3",
     "express-graphql": "^0.4.5",
     "express-jwt": "^3.3.0",
@@ -29,6 +30,8 @@
     "graphql-relay": "0.3.6",
     "history": "^1.17.0",
     "json-loader": "^0.5.4",
+    "node-sass": "^3.4.2",
+    "normalize-scss": "^4.0.3",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "pg": "^4.4.3",
@@ -38,15 +41,19 @@
     "react-markdown": "^1.2.3",
     "react-relay": "0.6.1",
     "react-router": "^2.0.0-rc5",
+    "sass-loader": "^3.1.2",
     "sequelize": "^3.18.0",
     "sequelize-fixtures": "^0.4.8",
+    "support-for": "^1.0.3",
     "webpack": "1.12.9",
     "webpack-dev-server": "1.14.0"
   },
   "devDependencies": {
     "babel-cli": "^6.4.0",
+    "babel-eslint": "^4.1.6",
+    "css-loader": "^0.23.1",
     "eslint-config-airbnb": "^4.0.0",
     "eslint-plugin-react": "^3.15.0",
-    "babel-eslint": "^4.1.6"
+    "style-loader": "^0.13.0"
   }
 }

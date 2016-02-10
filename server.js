@@ -104,7 +104,16 @@ const compiler = webpack({
         loader: 'json',
         test: /\.json$/,
       },
+      {
+        test: /\.s[ac]ss$/,
+        loaders: ['style', 'css', 'sass'],
+      },
     ],
+  },
+  sassLoader: {
+    includePaths: [path.join(__dirname, 'node_modules', 'normalize-scss', 'sass'),
+                   path.join(__dirname, 'node_modules',
+                   'normalize-scss', 'node_modules', 'support-for', 'sass')],
   },
   output: { filename: 'app.jsx', path: '/' },
 });

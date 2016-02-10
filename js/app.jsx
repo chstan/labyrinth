@@ -14,6 +14,9 @@ import ChamberPage from './components/ChamberPage';
 import AppQueries from './queries/AppQueries';
 import ChamberQueries from './queries/ChamberQueries';
 
+import '../scss/main.scss';
+import 'normalize-scss';
+
 ReactDOM.render(
   <RelayRouter history={browserHistory}>
     <Route path="/" component={Welcome}>

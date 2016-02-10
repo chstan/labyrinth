@@ -37,7 +37,7 @@ const User = sequelize.define('user', {
     getSuggestedChambers() {
       const user = this;
       return sequelize.models.chamber.findAll({ where: {
-        CuratorId: { $ne: user.id },
+        userId: { $ne: user.id },
       } });
     },
     validPassword(password) {
