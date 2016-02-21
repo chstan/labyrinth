@@ -17,14 +17,22 @@ import ChamberQueries from './queries/ChamberQueries';
 import '../scss/main.scss';
 import 'normalize-scss';
 
+function prepareAttemptChamberParams(params) {
+  return {
+    chamberId: params.chamberId,
+    viewedSection: params.sectionId ? parseInt(params.sectionId, 10) : null,
+  };
+}
+
 ReactDOM.render(
   <RelayRouter history={browserHistory}>
     <Route path="/" component={Welcome}>
       <Route path="login" component={Login} />
       <Route path="test" component={App} queries={AppQueries} />
       <Route path="learn" component={SuggestedChambersPage} queries={AppQueries} />
-      <Route path="learn/chamber/:chamberId/:chamberName"
+      <Route path="learn/chamber/:chamberId/:chamberName/:sectionId/:sectionName"
         component={ChamberPage} queries={ChamberQueries}
+        queryParams={['viewedSection']} prepareParams={prepareAttemptChamberParams}
       />
     </Route>
   </RelayRouter>,

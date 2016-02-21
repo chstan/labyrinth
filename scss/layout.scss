@@ -1,0 +1,14 @@
+@import './shadow';
+
+$chamberHeaderHeight: 48px;
+$viewerStatusBoxHeight: 32px;
+$viewerStatusBoxWidth: 64px;
+
+.flex-right {
+  margin-left: auto;
+}
+
+@mixin card() {
+  @include box-shadow(0, 0, 6px, $lightShadowColor);
+  border: 1px solid $lightShadowColor;
+}

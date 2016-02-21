@@ -1,0 +1,8 @@
+@import '../../scss/color';
+@import '../../scss/layout';
+@import '../../scss/shadow';
+
+.chamber-page {
+  @include card();
+  background-color: $grayLighter;
+}

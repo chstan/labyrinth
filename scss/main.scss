@@ -1,0 +1,26 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700);
+
+@import './color';
+
+body {
+  font-family: Roboto, sans-serif;
+}
+
+.button {
+  display: inline-block;
+  text-decoration: none;
+  cursor: pointer;
+  color: white;
+  background-color: $acceptGreen;
+  text-align: center;
+  letter-spacing: 1px;
+
+  border: none;
+  border-radius: 1px;
+  height: 32px;
+  line-height: 32px;
+  outline: 0;
+  padding: 0 8px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}

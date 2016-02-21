@@ -1,0 +1,16 @@
+@import '../../scss/layout';
+@import '../../scss/shadow';
+
+.viewer-status {
+  height: $viewerStatusBoxHeight;
+  min-width: $viewerStatusBoxWidth;
+  border-radius: ($viewerStatusBoxHeight / 2);
+
+  background-color: white;
+
+  text-align: center;
+  display: inline-block;
+  line-height: $viewerStatusBoxHeight;
+
+  @include box-shadow(0px, 0px, 3px, $mediumShadowColor, true);
+}

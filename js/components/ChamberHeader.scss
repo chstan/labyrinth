@@ -1,0 +1,18 @@
+@import '../../scss/layout';
+@import '../../scss/color';
+
+.chamber-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
+  background-color: $grayDarker;
+  padding: 8px;
+  height: $chamberHeaderHeight;
+
+  h1 {
+    color: white;
+    font-size: 32px;
+    font-weight: 100;
+  }
+}

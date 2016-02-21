@@ -1,0 +1,15 @@
+@import '../../scss/badge';
+@import '../../scss/color';
+
+.badge.complete {
+  background-color: $blueDark;
+  color: $white;
+
+  > .icon {
+    background-color: $blueDarker;
+
+    path {
+      stroke: white !important;
+    }
+  }
+}

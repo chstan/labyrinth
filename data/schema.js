@@ -1,8 +1,10 @@
 import {
   GraphQLBoolean,
   GraphQLInt,
+  GraphQLID,
   GraphQLInterfaceType,
   GraphQLList,
+  GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLString,
@@ -14,6 +16,7 @@ import {
   connectionFromPromisedArray,
   fromGlobalId,
   globalIdField,
+  mutationWithClientMutationId,
   nodeDefinitions,
 } from 'graphql-relay';
 
@@ -416,12 +419,68 @@ const queryType = new GraphQLObjectType({
 * This is the type that will be the root of our mutations,
 * and the entry point into performing writes in our schema.
 */
-// const mutationType = new GraphQLObjectType({
-//   name: 'Mutation',
-//   fields: () => ({
-//     // Add your own mutations here
-//   }),
-// });
+const AttemptMarkdownSectionMutation = mutationWithClientMutationId({
+  name: 'AttemptMarkdownSection',
+  inputFields: {
+    id: { type: new GraphQLNonNull(GraphQLID) },
+  },
+  outputFields: {
+    section: {
+      type: sectionInterface,
+      resolve: ({ section }) => section,
+    },
+    chamber: {
+      type: chamberType,
+      resolve: ({ chamber }) => chamber,
+    },
+  },
+  mutateAndGetPayload: ({ id }, { rootValue }) => {
+    if (!rootValue.currentUser) {
+      throw new Error('403 - Authorization required');
+    }
+    const localSectionId = fromGlobalId(id).id;
+
+    Db.models.answerSet.findOrCreate({
+      where: {
+        userId: rootValue.currentUser.id,
+        sectionId: localSectionId,
+      },
+      defaults: {
+        userId: rootValue.currentUser.id,
+        sectionId: localSectionId,
+      },
+    }).then(([answerSet]) => {
+      Db.models.answer.findOrCreate({
+        where: {
+          answerSetId: answerSet.id,
+        },
+        defaults: {
+          answerSetId: answerSet.id,
+          valid: true,
+          kind: 'token',
+        },
+      }).then(([answer]) => {
+        answer.update({ valid: true, kind: 'token' });
+      });
+    });
+
+    const section = Db.models.section.findOne({
+      where: { id: localSectionId },
+    });
+
+    return {
+      section,
+      chamber: section.then(sec => sec.getChamber()),
+    };
+  },
+});
+
+const mutationType = new GraphQLObjectType({
+  name: 'Mutation',
+  fields: () => ({
+    attemptMarkdownSection: AttemptMarkdownSectionMutation,
+  }),
+});
 
 /**
 * Finally, we construct our schema (whose starting query type is the query
@@ -429,5 +488,5 @@ const queryType = new GraphQLObjectType({
 */
 export const Schema = new GraphQLSchema({
   query: queryType,
-  //mutation: mutationType,
+  mutation: mutationType,
 });
