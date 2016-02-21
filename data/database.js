@@ -77,16 +77,28 @@ const Section = sequelize.define('section', {
     type: Sequelize.JSON,
     defaultValue: {},
   },
-});
-
-const AnswerSet = sequelize.define('answerSet', {
-  valid: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false,
+}, {
+  instanceMethods: {
+    getAnswersFor(user) {
+      return sequelize.models.answerSet.findOne({
+        where: { userId: user.id, sectionId: this.id },
+      }).then(answerSet => answerSet.getAnswers()).catch(() => []);
+    },
   },
 });
 
-const AnswerAttempt = sequelize.define('answer', { // eslint-disable-line no-unused-vars
+const AnswerSet = sequelize.define('answerSet', {
+  // by default Sequelize doesn't put a primary key on the through join
+  // because it's identified by its two foreign keys, we need one for
+  // GraphQL purposes though so we put it back manually
+  id: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+});
+
+const AnswerAttempt = sequelize.define('answer', {
   valid: {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
@@ -95,19 +107,42 @@ const AnswerAttempt = sequelize.define('answer', { // eslint-disable-line no-unu
     type: Sequelize.JSON,
     defaultValue: {},
   },
+  kind: {
+    type: Sequelize.STRING,
+    validate: {
+      isIn: [['token']],
+    },
+  },
+}, {
+  instanceMethods: {
+    getUser() {
+      return this.getAnswerSet().then(answerSet =>
+        sequelize.models.user.findOne({
+          where: { id: answerSet.userId },
+        })
+      );
+    },
+    getSection() {
+      return this.getAnswerSet().then(answerSet =>
+        sequelize.models.section.findOne({
+          where: { id: answerSet.sectionId },
+        })
+      );
+    },
+  },
 });
 
-User.hasMany(Chamber, { as: 'Curated' });
-Chamber.belongsTo(User, { as: 'Curator' });
+User.hasMany(Chamber, { as: 'curated' });
+Chamber.belongsTo(User, { as: 'curator' });
 
-Chamber.hasMany(Section, { as: 'Sections' });
-Section.belongsTo(Chamber, { as: 'Chamber' });
+Chamber.hasMany(Section, { as: 'sections' });
+Section.belongsTo(Chamber, { as: 'chamber' });
 
-User.belongsToMany(Section, { as: 'AttemptedSections', through: 'AnswerSet' });
-Section.belongsToMany(User, { as: 'Answerers', through: 'AnswerSet' });
+User.belongsToMany(Section, { as: 'attemptedSections', through: 'answerSet' });
+Section.belongsToMany(User, { as: 'answerers', through: 'answerSet' });
 
-AnswerSet.hasMany(AnswerAttempt);
-AnswerAttempt.belongsTo(AnswerSet);
+AnswerSet.hasMany(AnswerAttempt, { as: 'answers' });
+AnswerAttempt.belongsTo(AnswerSet, { as: 'answerSet' });
 
 sequelize.sync({ force: true }).then(() => {
   User.create({
