@@ -4,13 +4,18 @@ import bodyParser from 'body-parser';
 import expressSession from 'express-session';
 import graphQLHTTP from 'express-graphql';
 import path from 'path';
+import connectRedis from 'connect-redis';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
-import { Schema } from './data/schema';
 import passport from 'passport';
 import PassportLocal from 'passport-local';
+
 import Db from './data/database';
+import { Schema } from './data/schema';
+
 import secrets from './secrets';
+
+const RedisStore = connectRedis(expressSession);
 
 // ========== PASSPORT ===============
 passport.use(new PassportLocal.Strategy({
@@ -49,6 +54,10 @@ appServer.use(cookieParser());
 appServer.use(bodyParser.json());
 appServer.use(bodyParser.urlencoded({ extended: false }));
 appServer.use(expressSession({
+  store: new RedisStore({
+    host: secrets.redis.host,
+    port: secrets.redis.port,
+  }),
   secret: secrets.sessionKey,
   resave: false,
   saveUninitialized: false,
