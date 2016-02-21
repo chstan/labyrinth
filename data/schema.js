@@ -140,7 +140,15 @@ chamberType = new GraphQLObjectType({
     status: {
       type: chamberStatusType,
       description: `The status of a learner's efforts on a chamber`,
-      resolve: () => ({ solvedCount: 5, sectionCount: 7 }),
+      resolve: (chamber, __, { rootValue: { currentUser } }) =>
+        chamber.getSections().then(sections =>
+          Promise.all(sections.map(section =>
+            section.isCompletedFor(currentUser)
+          ))
+        ).then(completeds => ({
+          solvedCount: completeds.filter(x => x).length,
+          sectionCount: completeds.length,
+        })),
     },
     section: {
       type: sectionInterface,

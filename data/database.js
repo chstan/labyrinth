@@ -79,10 +79,21 @@ const Section = sequelize.define('section', {
   },
 }, {
   instanceMethods: {
-    getAnswersFor(user) {
+    getAnswerSetFor(user) {
       return sequelize.models.answerSet.findOne({
         where: { userId: user.id, sectionId: this.id },
-      }).then(answerSet => answerSet.getAnswers()).catch(() => []);
+      });
+    },
+    getAnswersFor(user) {
+      return this.getAnswerSetFor(user).then(
+        answerSet => answerSet.getAnswers()).catch(() => []);
+    },
+    isCompletedFor(user) {
+      return this.getAnswerSetFor(user).then(
+        answerSet => answerSet.getAnswers()
+      ).then(
+        answers => answers.some(a => a.valid)
+      ).catch(() => false);
     },
   },
 });
