@@ -179,20 +179,20 @@ sequelize.sync({ force: true }).then(() => {
         },
       });
       primaryChamber.createSection({
-        kind: 'curatorValidatedAnswer',
-        name: 'Question that requires feedback and validation by the curator',
-        content: {
-          exposition: '# Some exposition here',
-          question: 'What is the meaning of addition?',
-        },
-      });
-      primaryChamber.createSection({
         kind: 'numericAnswer',
         name: 'Question that requires a numeric answer',
         content: {
           exposition: '# Some exposition here',
           question: 'What is 4 + 2?',
           answer: 6,
+        },
+      });
+      primaryChamber.createSection({
+        kind: 'curatorValidatedAnswer',
+        name: 'Question that requires feedback and validation by the curator',
+        content: {
+          exposition: '# Some exposition here',
+          question: 'What is the meaning of addition?',
         },
       });
     });

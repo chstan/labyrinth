@@ -132,6 +132,11 @@ chamberType = new GraphQLObjectType({
   description: 'A chamber',
   fields: () => ({
     id: globalIdField('Chamber'),
+    dbId: {
+      type: GraphQLInt,
+      description: 'The database ID for the chamber, used for URLs',
+      resolve: chamber => chamber.id,
+    },
     name: {
       type: GraphQLString,
       description: 'The name of the chamber',
@@ -237,6 +242,10 @@ sectionInterface = new GraphQLInterfaceType({
   interfaces: [nodeInterface],
   fields: () => ({
     id: globalIdField(),
+    dbId: {
+      type: GraphQLInt,
+      description: 'The database ID of the section, used for URLs',
+    },
     kind: {
       type: GraphQLString,
       description: 'The kind of the section, used to support section polymorphism',
@@ -263,6 +272,11 @@ curatorValidatedAnswerSectionType = new GraphQLObjectType({
   isTypeOf: section => section.kind === 'curatorValidatedSection',
   fields: () => ({
     id: globalIdField(),
+    dbId: {
+      type: GraphQLInt,
+      description: 'The database ID of the section, used for URLs',
+      resolve: section => section.id,
+    },
     chamber: {
       type: chamberType,
       description: 'The chamber this section belongs to',
@@ -306,6 +320,11 @@ numericAnswerSectionType = new GraphQLObjectType({
   isTypeOf: section => section.kind === 'numericAnswerSection',
   fields: () => ({
     id: globalIdField(),
+    dbId: {
+      type: GraphQLInt,
+      description: 'The database ID of the section, used for URLs',
+      resolve: section => section.id,
+    },
     chamber: {
       type: chamberType,
       description: 'The chamber this section belongs to',
@@ -354,6 +373,11 @@ markdownSectionType = new GraphQLObjectType({
   isTypeOf: section => section.kind === 'markdown',
   fields: () => ({
     id: globalIdField(),
+    dbId: {
+      type: GraphQLInt,
+      description: 'The database ID of the section, used for URLs',
+      resolve: section => section.id,
+    },
     chamber: {
       type: chamberType,
       description: 'The chamber this section belongs to',
