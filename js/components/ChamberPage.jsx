@@ -31,16 +31,21 @@ class ChamberPage extends React.Component {
       }
     };
     return (
-      <main className="chamber-page attempts">
-        <ChamberHeader chamber={ this.props.chamber } />
 
-        <AttemptsSection
-          section={ this.props.chamber.section }
-          onComplete={ navigateToNextSection }
+      <main className="chamber-page attempts">
+        <AttemptsChamberNavigation
+          chamber={ this.props.chamber }
+          viewedSection={ parseInt(this.props.params.sectionId, 10) }
         />
+        <article>
+          <ChamberHeader chamber={ this.props.chamber } />
+          <AttemptsSection
+            section={ this.props.chamber.section }
+            onComplete={ navigateToNextSection }
+          />
+        </article>
       </main>
     );
-    // <AttemptsChamberNavigation chamber={this.props.chamber} />
   }
 }
 
@@ -50,7 +55,7 @@ ChamberPage.contextTypes = {
 
 export default Relay.createContainer(ChamberPage, {
   initialVariables: {
-    viewedSection: 3,
+    viewedSection: null,
   },
   fragments: {
     chamber: () => Relay.QL`

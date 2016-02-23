@@ -1,0 +1,40 @@
+@import '../../scss/color';
+
+.section-nav-item {
+  padding: 4px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+
+  cursor: pointer;
+  color: $black;
+  font-size: 18px;
+  font-weight: 100;
+  text-decoration: none;
+
+  &.active {
+    font-weight: 500;
+  }
+
+  &:hover {
+    background-color: $grayLighter;
+    &:not(.active) {
+      font-weight: 300;
+    }
+  }
+
+  .icon > svg {
+    width: 32px;
+    height: 32px;
+    display: inline-block;
+  }
+
+  .icon.locked path {
+    stroke-width: 0 !important;
+    fill: $gray !important;
+  }
+
+  .icon.completed path {
+    stroke: green !important;
+  }
+}
