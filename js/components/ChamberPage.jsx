@@ -6,6 +6,8 @@ import ChamberHeader from './ChamberHeader';
 import AttemptsSection from './AttemptsSection';
 import AttemptsChamberNavigation from './AttemptsChamberNavigation';
 
+import routerUtils from '../utils/router';
+
 import './ChamberPage.scss';
 
 // This naming is subject to change, but this is the page that represents
@@ -21,11 +23,8 @@ class ChamberPage extends React.Component {
     const nextSection = _.get(chamber.sections, indexOfCurrent + 1);
     const navigateToNextSection = () => {
       if (nextSection) {
-        const base = `/learn/chamber/${ chamber.dbId }/${ _.kebabCase(chamber.name) }/`;
-        const sectionFrag = `${ nextSection.dbId }/${ _.kebabCase(nextSection.name) }`;
-        router.push({
-          pathname: base + sectionFrag,
-        });
+        const pathname = routerUtils.forAttemptsSection(chamber, nextSection);
+        router.push({ pathname });
       } else {
         // TODO this should go somewhere more interesting
         router.push('/');
