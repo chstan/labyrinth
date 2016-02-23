@@ -5,7 +5,6 @@ class Welcome extends React.Component {
   render() {
     return (
       <div>
-        <p>You are on the welcome page.</p>
         <Link to={`/login`}>Login</Link>
         { this.props.children }
       </div>
