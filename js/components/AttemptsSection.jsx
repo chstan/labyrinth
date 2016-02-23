@@ -13,7 +13,11 @@ class AttemptsSection extends React.Component {
     const kind = this.props.section.kind;
     const id = this.props.section.id;
     const detailedSection = this.componentTypes[kind];
-    return React.createElement(detailedSection, { key: id, section: this.props.section });
+    return React.createElement(detailedSection, {
+      key: id,
+      section: this.props.section,
+      onComplete: this.props.onComplete,
+    });
   }
 }
 

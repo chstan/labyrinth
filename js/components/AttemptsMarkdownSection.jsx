@@ -15,7 +15,11 @@ class AttemptsMarkdownSection extends React.Component {
     Relay.Store.commitUpdate(
       new AttemptMarkdownSectionMutation({
         section: this.props.section,
-      })
+      }), {
+        onSuccess: () => {
+          this.props.onComplete();
+        },
+      }
     );
   }
   render() {

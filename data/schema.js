@@ -1,5 +1,6 @@
 import {
   GraphQLBoolean,
+  GraphQLEnumType,
   GraphQLInt,
   GraphQLID,
   GraphQLInterfaceType,
@@ -37,6 +38,7 @@ let numericAnswerSectionType; // eslint-disable-line no-unused-vars
 let answerInterface; // eslint-disable-line no-unused-vars
 let tokenAnswerType; // eslint-disable-line no-unused-vars
 
+let sectionStatusType; // eslint-disable-line no-unused-vars
 
 let chamberConnection;
 
@@ -132,6 +134,11 @@ chamberType = new GraphQLObjectType({
   description: 'A chamber',
   fields: () => ({
     id: globalIdField('Chamber'),
+    dbId: {
+      type: GraphQLInt,
+      description: 'The database ID for the chamber, used for URLs',
+      resolve: chamber => chamber.id,
+    },
     name: {
       type: GraphQLString,
       description: 'The name of the chamber',
@@ -237,6 +244,10 @@ sectionInterface = new GraphQLInterfaceType({
   interfaces: [nodeInterface],
   fields: () => ({
     id: globalIdField(),
+    dbId: {
+      type: GraphQLInt,
+      description: 'The database ID of the section, used for URLs',
+    },
     kind: {
       type: GraphQLString,
       description: 'The kind of the section, used to support section polymorphism',
@@ -248,6 +259,10 @@ sectionInterface = new GraphQLInterfaceType({
     name: {
       type: GraphQLString,
       description: 'The name of the section',
+    },
+    status: {
+      type: sectionStatusType,
+      description: 'The status of the section for the viewer',
     },
     answers: {
       type: new GraphQLList(answerInterface),
@@ -263,6 +278,11 @@ curatorValidatedAnswerSectionType = new GraphQLObjectType({
   isTypeOf: section => section.kind === 'curatorValidatedSection',
   fields: () => ({
     id: globalIdField(),
+    dbId: {
+      type: GraphQLInt,
+      description: 'The database ID of the section, used for URLs',
+      resolve: section => section.id,
+    },
     chamber: {
       type: chamberType,
       description: 'The chamber this section belongs to',
@@ -274,6 +294,17 @@ curatorValidatedAnswerSectionType = new GraphQLObjectType({
       type: GraphQLString,
       description: 'The name of the section',
       resolve: section => section.name,
+    },
+    status: {
+      type: sectionStatusType,
+      description: 'The status of the section for the viewer',
+      resolve: (section, __, { rootValue: { currentUser } }) =>
+        section.getAnswersFor(currentUser).then(answers => {
+          // TODO determine what the status of an individual
+          // section is here, render icon inline for nav
+          if (answers.some(a => a.valid)) return 'COMPLETE';
+          return 'FRONTIER';
+        }),
     },
     kind: {
       type: GraphQLString,
@@ -306,6 +337,11 @@ numericAnswerSectionType = new GraphQLObjectType({
   isTypeOf: section => section.kind === 'numericAnswerSection',
   fields: () => ({
     id: globalIdField(),
+    dbId: {
+      type: GraphQLInt,
+      description: 'The database ID of the section, used for URLs',
+      resolve: section => section.id,
+    },
     chamber: {
       type: chamberType,
       description: 'The chamber this section belongs to',
@@ -317,6 +353,17 @@ numericAnswerSectionType = new GraphQLObjectType({
       type: GraphQLString,
       description: 'The name of the section',
       resolve: section => section.name,
+    },
+    status: {
+      type: sectionStatusType,
+      description: 'The status of the section for the viewer',
+      resolve: (section, __, { rootValue: { currentUser } }) =>
+        section.getAnswersFor(currentUser).then(answers => {
+          // TODO determine what the status of an individual
+          // section is here, render icon inline for nav
+          if (answers.some(a => a.valid)) return 'COMPLETE';
+          return 'FRONTIER';
+        }),
     },
     kind: {
       type: GraphQLString,
@@ -347,6 +394,15 @@ numericAnswerSectionType = new GraphQLObjectType({
   }),
 });
 
+sectionStatusType = new GraphQLEnumType({
+  name: 'SectionStatusType',
+  values: {
+    COMPLETE: { value: 'COMPLETE' },
+    FRONTIER: { value: 'FRONTIER' },
+    LOCKED: { value: 'LOCKED' },
+  },
+});
+
 markdownSectionType = new GraphQLObjectType({
   name: 'MarkdownSection',
   description: 'A section of markdown content',
@@ -354,6 +410,22 @@ markdownSectionType = new GraphQLObjectType({
   isTypeOf: section => section.kind === 'markdown',
   fields: () => ({
     id: globalIdField(),
+    dbId: {
+      type: GraphQLInt,
+      description: 'The database ID of the section, used for URLs',
+      resolve: section => section.id,
+    },
+    status: {
+      type: sectionStatusType,
+      description: 'The status of the section for the viewer',
+      resolve: (section, __, { rootValue: { currentUser } }) =>
+        section.getAnswersFor(currentUser).then(answers => {
+          // TODO determine what the status of an individual
+          // section is here, render icon inline for nav
+          if (answers.some(a => a.valid)) return 'COMPLETE';
+          return 'FRONTIER';
+        }),
+    },
     chamber: {
       type: chamberType,
       description: 'The chamber this section belongs to',

@@ -2,7 +2,6 @@
 @import '../../scss/markdown';
 
 .markdown-section {
-  background-color: $grayLighter;
   padding: 16px;
 
   .section-header > * {
@@ -11,7 +10,7 @@
 
     &::after {
       margin-top: 12px;
-      border: 3px solid darken($gray, 50%);
+      //border: 2px solid darken($gray, 50%);
       display: block;
       content: '\00A0';
       max-width: 200px;
@@ -25,7 +24,7 @@
 
   padding: 8px 16px;
 
-  background-color: $grayLight;
+  background-color: $grayLighter;
 }
 
 .controls {

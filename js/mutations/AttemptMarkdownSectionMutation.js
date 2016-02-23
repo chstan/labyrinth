@@ -22,7 +22,10 @@ class AttemptMarkdownSectionMutation extends Relay.Mutation {
     return Relay.QL`
     fragment on AttemptMarkdownSectionPayload {
       chamber {
-        status
+        status,
+        sections {
+          status,
+        }
       },
       section
     }`;
