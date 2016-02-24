@@ -2,5 +2,6 @@
     sha: '29d19ff3461db47d81a65f93a8bdee5bed97793d'  # 1.9.0
     hooks:
     -   id: eslint
+        files: \.(js|jsx)$
         args: [-c=./.eslintrc.yml]
         additional_dependencies: ['eslint', 'eslint-config-airbnb', 'eslint-plugin-react', 'babel-eslint']

@@ -7,3 +7,4 @@
     modules: true
   rules:
     react/prop-types: 0
+    no-console: 2

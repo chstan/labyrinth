@@ -56,5 +56,5 @@ export default Relay.createContainer(SectionNavItem, {
       name,
       status,
     }`,
-  }
+  },
 });

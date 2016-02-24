@@ -13,7 +13,7 @@ class HeaderNav extends React.Component {
           <Link to={`/login`}>Login</Link>
         </div>
       </nav>
-    )
+    );
   }
 }
 
