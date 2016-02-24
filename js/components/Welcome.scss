@@ -1,0 +1,14 @@
+@import '../../scss/layout';
+
+.app-wrapper {
+  position: relative;
+
+  > * {
+    position: absolute;
+    width: 100%;
+  }
+
+  > *:not(:first-child) {
+    top: $headerNavHeight;
+  }
+}

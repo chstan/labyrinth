@@ -1,0 +1,45 @@
+@import '../../scss/color';
+@import '../../scss/layout';
+@import '../../scss/shadow';
+@import '../../scss/transition';
+
+.header-nav {
+  display: flex;
+  align-items: center;
+
+  height: $headerNavHeight;
+
+  @include box-shadow(0, 0, 6px, darken($grayDarker, 40%))
+  z-index: $layerUI;
+
+  color: $white;
+  background-color: $grayDarker;
+
+  > * {
+    margin: 0 20px;
+  }
+
+  > .branding {
+    font-size: 28px;
+    font-weight: 300;
+  }
+
+  > .controls {
+    a {
+      border: 1px solid white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 300;
+      text-decoration: none;
+      cursor: pointer;
+      color: $white;
+
+      transition: background-color $fastUITransition;
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        transition: background-color $fastUITransition;
+      }
+    }
+    margin-left: auto;
+  }
+}
