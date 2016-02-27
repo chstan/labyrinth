@@ -32,8 +32,6 @@ class SectionNavItem extends React.Component {
     const iconClasses = `icon ${ statusIcon.class }`;
     const classNames = `section-nav-item ${this.props.active ? 'active' : ''}`;
 
-    console.log(classNames);
-    console.log(this.props);
     return (
       <Link to={ navUrl } className={ classNames }>
         <span className={ iconClasses }>
@@ -58,5 +56,5 @@ export default Relay.createContainer(SectionNavItem, {
       name,
       status,
     }`,
-  }
+  },
 });
