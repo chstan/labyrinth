@@ -1,0 +1,36 @@
+.button {
+  display: inline-block;
+  text-decoration: none;
+  cursor: pointer;
+  color: white;
+  background-color: $acceptGreen;
+  text-align: center;
+  letter-spacing: 1px;
+
+  border: none;
+  border-radius: 1px;
+  height: 32px;
+  line-height: 32px;
+  outline: 0;
+  padding: 0 8px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.input-group {
+  margin-bottom: 16px;
+}
+
+input {
+  font-size: 18px;
+  padding: 8px 8px 8px 4px;
+  display: block;
+  width: 300px;
+  border: none;
+  border-bottom: 1px solid rgb(120,120,120);
+  outline: none;
+
+  &:focus {
+    outline: none;
+  }
+}

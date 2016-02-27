@@ -2,28 +2,10 @@
 
 @import './color';
 @import './reset';
+@import './inputs';
 
 body {
   font-family: Roboto, sans-serif;
 
   background-color: $appBackgroundColor;
-}
-
-.button {
-  display: inline-block;
-  text-decoration: none;
-  cursor: pointer;
-  color: white;
-  background-color: $acceptGreen;
-  text-align: center;
-  letter-spacing: 1px;
-
-  border: none;
-  border-radius: 1px;
-  height: 32px;
-  line-height: 32px;
-  outline: 0;
-  padding: 0 8px;
-  text-transform: uppercase;
-  vertical-align: middle;
 }
