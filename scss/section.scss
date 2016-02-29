@@ -1,0 +1,30 @@
+@import './color';
+@import './markdown';
+
+.section > .content {
+  @include markdown();
+
+  padding: 8px 16px;
+
+  background-color: $grayLighter;
+}
+
+.section > .controls {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: row;
+
+  > * {
+    margin-left: auto;
+  }
+}
+
+.section {
+  padding: 16px;
+
+  .section-header > * {
+    font-weight: 300;
+    font-weight: 26px;
+    margin-bottom: 16px;
+  }
+}

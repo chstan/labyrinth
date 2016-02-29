@@ -1,0 +1,40 @@
+@import '../../scss/color';
+@import '../../scss/inputs';
+@import '../../scss/markdown';
+@import '../../scss/section';
+@import '../../scss/shadow';
+
+.numeric-answer-section .submit-answer {
+  @include box-shadow(0, 0, 4px, $gray);
+
+  background-color: $greenLighter;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  > * {
+    display: inline-block;
+  }
+
+  @include placeholder {
+    color: lighten(desaturate($green, 40%), 10%);
+  }
+
+  > input {
+    color: $greenDark;
+    width: 140px;
+  }
+
+  button {
+    background-color: transparent;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    svg path {
+      fill: $greenDark;
+    }
+
+    &:disabled {
+      display: none;
+    }
+  }
+}
