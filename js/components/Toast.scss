@@ -1,0 +1,57 @@
+@import '../../scss/color';
+@import '../../scss/layout';
+@import '../../scss/shadow';
+@import '../../scss/transition';
+
+.toast {
+  width: 100%;
+  min-height: $toastHeight;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  @include box-shadow(0, 0, 8px, $grayDarker);
+  border-radius: 2px;
+
+  font-size: 16px;
+  line-height: 20px;
+
+  > * {
+    margin: 12px 12px;
+  }
+
+  &.success {
+    background-color: lighten($green, 30%);
+    color: darken($green, 30%);
+  }
+  &.info {
+    background-color: $blue;
+    color: darken($blue, 60%);
+  }
+  &.error {
+    background-color: $red;
+    color: darken($red, 60%);
+  }
+}
+
+.toast .action {
+  margin-left: auto;
+
+  display: block;
+  text-transform: uppercase;
+  font-weight: 500;
+  height: 100%;
+  line-height: 28px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 16px;
+  letter-spacing: 1px;
+
+  background-color: transparent;
+
+  transition: background-color $fastUITransition;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+}

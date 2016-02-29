@@ -4,6 +4,7 @@ import {
   GraphQLInt,
   GraphQLID,
   GraphQLInterfaceType,
+  GraphQLFloat,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -37,6 +38,7 @@ let numericAnswerSectionType; // eslint-disable-line no-unused-vars
 
 let answerInterface; // eslint-disable-line no-unused-vars
 let tokenAnswerType; // eslint-disable-line no-unused-vars
+let numericAnswerType; // eslint-disable-line no-unused-vars
 
 let sectionStatusType; // eslint-disable-line no-unused-vars
 
@@ -186,14 +188,8 @@ answerInterface = new GraphQLInterfaceType({
   resolveType: answer => {
     const kindToType = {
       token: tokenAnswerType,
+      numeric: numericAnswerType,
     };
-    // use the kind of the section to infer what the proper
-    // type of the answer should be
-    // TODO: this is inefficient because it might involve more queries
-    // depending on Sequlize's caching strategy
-    // return answer.getSection().then(section =>
-    //   sectionKindsToType[section.kind]
-    // );
     return kindToType[answer.kind];
   },
   fields: () => ({
@@ -234,6 +230,36 @@ tokenAnswerType = new GraphQLObjectType({
       type: userType,
       description: 'The section the answer belongs to',
       resolve: answer => answer.getUser(),
+    },
+  }),
+});
+
+numericAnswerType = new GraphQLObjectType({
+  name: 'NumericAnswer',
+  description: `An answer that is validated numerically against the proper value
+                for a given section.`,
+  interfaces: [answerInterface],
+  fields: () => ({
+    id: globalIdField(),
+    valid: {
+      type: GraphQLBoolean,
+      description: 'Whether the answer is a valid resolution to the section',
+      resolve: answer => answer.valid,
+    },
+    section: {
+      type: sectionInterface,
+      description: 'The section the answer belongs to',
+      resolve: answer => answer.getSection(),
+    },
+    user: {
+      type: userType,
+      description: 'The section the answer belongs to',
+      resolve: answer => answer.getUser(),
+    },
+    attempt: {
+      type: GraphQLFloat,
+      description: 'The answer that was given',
+      resolve: answer => answer.content.attempt,
     },
   }),
 });
@@ -334,7 +360,7 @@ numericAnswerSectionType = new GraphQLObjectType({
   name: 'NumericAnswerSection',
   description: 'A section that contains a question that has a numeric answer',
   interfaces: [sectionInterface],
-  isTypeOf: section => section.kind === 'numericAnswerSection',
+  isTypeOf: section => section.kind === 'numericAnswer',
   fields: () => ({
     id: globalIdField(),
     dbId: {
@@ -555,10 +581,75 @@ const AttemptMarkdownSectionMutation = mutationWithClientMutationId({
   },
 });
 
+const AttemptNumericAnswerSectionMutation = mutationWithClientMutationId({
+  name: 'AttemptNumericAnswerSection',
+  inputFields: {
+    id: { type: new GraphQLNonNull(GraphQLID) },
+    answerAttempt: { type: GraphQLString },
+  },
+  outputFields: {
+    section: {
+      type: sectionInterface,
+      resolve: ({ section }) => section,
+    },
+    chamber: {
+      type: chamberType,
+      resolve: ({ chamber }) => chamber,
+    },
+  },
+  mutateAndGetPayload: ({ id, answerAttempt }, { rootValue }) => {
+    if (!rootValue.currentUser) {
+      throw new Error('403 - Authorization required');
+    }
+    const localSectionId = fromGlobalId(id).id;
+    const badAnswerError = new Error(`Make sure your answer is a number!`);
+    const PRECISION = 0.1;
+
+    const attempt = parseFloat(answerAttempt);
+    if (isNaN(attempt)) {
+      throw badAnswerError;
+    }
+
+    return Promise.all([
+      // find or create an answer set
+      Db.models.answerSet.findOrCreate({
+        where: {
+          userId: rootValue.currentUser.id,
+          sectionId: localSectionId,
+        },
+        defaults: {
+          userId: rootValue.currentUser.id,
+          sectionId: localSectionId,
+        },
+      }),
+      // get the appropriate answer for the section
+      Db.models.section.findOne({ where: { id: localSectionId } }).then(section => {
+        if (section.kind !== 'numericAnswer') {
+          throw new Error('Attempted mutation on the wrong section type');
+        }
+        return section.content.answer;
+      }),
+    ]).then(([[answerSet], answer]) =>
+      answerSet.createAnswer({
+        attempt: { attempt },
+        valid: Boolean(Math.abs(attempt - answer) < PRECISION),
+        kind: 'numeric',
+      })
+    ).then(() => {
+      const section = Db.models.section.findOne({ where: { id: localSectionId } });
+      return {
+        section,
+        chamber: section.then(sec => sec.getChamber()),
+      };
+    });
+  },
+});
+
 const mutationType = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
     attemptMarkdownSection: AttemptMarkdownSectionMutation,
+    attemptNumericAnswerSection: AttemptNumericAnswerSectionMutation,
   }),
 });
 

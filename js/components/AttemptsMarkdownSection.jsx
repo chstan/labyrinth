@@ -26,9 +26,7 @@ class AttemptsMarkdownSection extends React.Component {
     const sectionCompleted = this.props.section.answers.some(a => a.valid);
     let controls;
     if (sectionCompleted) {
-      controls = (
-          <SectionCompletedBanner />
-      );
+      controls = <SectionCompletedBanner />;
     } else {
       controls = (
         <button className="button attempts-button"
@@ -37,7 +35,7 @@ class AttemptsMarkdownSection extends React.Component {
       );
     }
     return (
-      <article className="markdown-section attempts">
+      <article className="section markdown-section attempts">
         <header className="section-header">
           <h1>{ this.props.section.name }</h1>
         </header>

@@ -1,3 +1,5 @@
+@import './transition';
+
 .button {
   display: inline-block;
   text-decoration: none;
@@ -33,4 +35,28 @@ input {
   &:focus {
     outline: none;
   }
+}
+
+input.inline {
+  background-color: rgba(255, 255, 255, 0.1);
+  font-weight: 500;
+  border-radius: 2px;
+  margin: 4px;
+  padding: 6px 10px;
+  border: none;
+  transition: background-color $fastUITransition;
+  &:focus {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+@mixin placeholder {
+  ::-webkit-input-placeholder {@content}
+  :-moz-placeholder           {@content}
+  ::-moz-placeholder          {@content}
+  :-ms-input-placeholder      {@content}
+}
+
+button {
+  border: none;
 }

@@ -1,38 +1,12 @@
 @import '../../scss/color';
 @import '../../scss/markdown';
+@import '../../scss/section';
 
-.markdown-section {
-  padding: 16px;
-
-  .section-header > * {
-    font-weight: 300;
-    font-weight: 26px;
-
-    &::after {
-      margin-top: 12px;
-      //border: 2px solid darken($gray, 50%);
-      display: block;
-      content: '\00A0';
-      max-width: 200px;
-      height: 0;
-    }
-  }
-}
-
-.markdown-section > .content {
-  @include markdown();
-
-  padding: 8px 16px;
-
-  background-color: $grayLighter;
-}
-
-.markdown-section > .controls {
-  margin-top: 8px;
+.numeric-answer-section .submit-answer {
+  background-color: $greenLighter;
+  padding: 4px;
   display: flex;
-  flex-direction: row;
-
   > * {
-    margin-left: auto;
+    display: inline-block;
   }
 }

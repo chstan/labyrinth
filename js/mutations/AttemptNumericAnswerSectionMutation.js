@@ -1,6 +1,6 @@
 import Relay from 'react-relay';
 
-class AttemptMarkdownSectionMutation extends Relay.Mutation {
+class AttemptNumericAnswerSectionMutation extends Relay.Mutation {
   static fragments = {
     section: () => Relay.QL`
     fragment on Section {
@@ -12,15 +12,18 @@ class AttemptMarkdownSectionMutation extends Relay.Mutation {
   };
   getMutation() {
     return Relay.QL`
-      mutation {attemptMarkdownSection}
+      mutation { attemptNumericAnswerSection }
     `;
   }
   getVariables() {
-    return { id: this.props.section.id };
+    return {
+      id: this.props.section.id,
+      answerAttempt: this.props.answerAttempt,
+    };
   }
   getFatQuery() {
     return Relay.QL`
-    fragment on AttemptMarkdownSectionPayload {
+    fragment on AttemptNumericAnswerSectionPayload {
       chamber {
         status,
       },
@@ -38,4 +41,4 @@ class AttemptMarkdownSectionMutation extends Relay.Mutation {
   }
 }
 
-export default AttemptMarkdownSectionMutation;
+export default AttemptNumericAnswerSectionMutation;
