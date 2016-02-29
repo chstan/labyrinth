@@ -1,0 +1,24 @@
+@import '../../scss/layout';
+
+#toaster {
+  width: $toasterWidth;
+  height: 100%;
+  z-index: $layerToast;
+  position: absolute;
+  bottom: 0;
+  pointer-events: none;
+
+  display: flex;
+  flex-direction: column;
+
+  > * {
+    pointer-events: auto;
+    margin: 12px 20px;
+    &:first-child {
+      margin-top: auto;
+    }
+    &:last-child {
+      margin-bottom: 24px;
+    }
+  }
+}

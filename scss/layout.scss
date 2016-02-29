@@ -1,11 +1,15 @@
 @import './shadow';
 
+$toasterWidth: 240px;
+$toastHeight: 48px;
+
 $chamberHeaderHeight: 48px;
 $viewerStatusBoxHeight: 32px;
 $viewerStatusBoxWidth: 64px;
 $headerNavHeight: 48px;
 
 $layerModal: 100;
+$layerToast: 90;
 $layerUI: 20;
 $layerMid: 10;
 
