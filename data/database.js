@@ -121,7 +121,7 @@ const AnswerAttempt = sequelize.define('answer', {
   kind: {
     type: Sequelize.STRING,
     validate: {
-      isIn: [['token']],
+      isIn: [['token', 'numeric']],
     },
   },
 }, {
