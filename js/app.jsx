@@ -10,6 +10,7 @@ import Welcome from './components/Welcome';
 import Login from './components/Login';
 import SuggestedChambersPage from './components/SuggestedChambersPage';
 import ChamberPage from './components/ChamberPage';
+import ProfilePage from './components/ProfilePage';
 
 import AppQueries from './queries/AppQueries';
 import ChamberQueries from './queries/ChamberQueries';
@@ -34,6 +35,7 @@ ReactDOM.render(
         component={ChamberPage} queries={ChamberQueries}
         queryParams={['viewedSection']} prepareParams={prepareAttemptChamberParams}
       />
+      <Route path="profile" component={ProfilePage} queries={AppQueries} />
     </Route>
   </RelayRouter>,
   document.getElementById('root')
