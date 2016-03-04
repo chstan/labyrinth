@@ -29,6 +29,10 @@ const User = sequelize.define('user', {
       isEmail: true,
     },
   },
+  accountCreatedOn: {
+    type: Sequelize.DATE,
+    defaultValue: Sequelize.NOW,
+  },
   passwordHash: {
     type: Sequelize.STRING,
   },
