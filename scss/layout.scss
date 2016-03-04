@@ -1,5 +1,7 @@
 @import './shadow';
 
+$profilePictureSize: 120px;
+
 $toasterWidth: 240px;
 $toastHeight: 48px;
 
@@ -20,4 +22,12 @@ $layerMid: 10;
 @mixin card() {
   @include box-shadow(0, 0, 6px, $lightShadowColor);
   border: 1px solid $lightShadowColor;
+}
+
+.row {
+  display: flex;
+
+  > * {
+    margin: 20px;
+  }
 }

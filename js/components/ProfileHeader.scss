@@ -1,0 +1,56 @@
+@import '../../scss/color';
+@import '../../scss/layout';
+@import '../../scss/shadow';
+
+.profile-header {
+  display: flex;
+  background-color: $grayLighter;
+  align-items: center;
+
+  padding: 40px;
+
+  > * {
+    margin-right: 40px;
+  }
+
+  > .profile-picture {
+    width: $profilePictureSize;
+    height: $profilePictureSize;
+    background-color: $gray;
+    border: none;
+    border-radius: $profilePictureSize / 2;
+    @include box-shadow(0, 0, 6px, $gray);
+  }
+}
+
+.profile-basics {
+  display: flex;
+  flex-direction: column;
+
+  > *:not(:last-child) {
+    margin-bottom: 8px;
+  }
+
+  > .name {
+    font-weight: 400;
+    font-size: 20px;
+  }
+
+  > .email {
+    font-weight: 300;
+    font-size: 14px;
+  }
+}
+
+.profile-role {
+  font-size: 18px;
+
+  > .role {
+    font-weight: 400;
+  }
+
+  > .date {
+    font-weight: 300;
+    color: darken($grayDarker, 30%);
+  }
+}

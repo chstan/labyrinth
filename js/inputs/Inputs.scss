@@ -1,0 +1,46 @@
+@import '../../scss/color';
+@import '../../scss/layout';
+@import '../../scss/shadow';
+@import '../../scss/transition';
+
+form {
+
+  @include card;
+  background-color: $grayLighter;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 12px 16px !important;
+}
+
+.input-group {
+  display: inline-flex;
+  align-items: center;
+
+  input {
+    transition: background-color $fastUITransition;
+    background-color: transparent;
+    &:not(:focus) {
+      margin-bottom: 1px;
+    }
+    &:focus {
+      background-color: rgba(0, 0, 0, 0.03);
+      border-bottom-width: 2px;
+    }
+  }
+
+  > label {
+    font-weight: 500;
+    width: 100px;
+  }
+
+}
+
+.controls.form-controls {
+  display: flex;
+
+  > *:first-child {
+    margin-left: auto;
+  }
+}
