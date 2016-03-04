@@ -96,11 +96,16 @@ userType = new GraphQLObjectType({
     name: {
       type: GraphQLString,
       description: "The User's name as it appears on the site.",
-      resolve: (user) => user.name,
+      resolve: user => user.name,
     },
     accountCreatedOn: {
       type: GraphQLString,
       resolve: user => user.accountCreatedOn.toISOString(),
+    },
+    email: {
+      type: GraphQLString,
+      description: "The User's email",
+      resolve: user => user.email,
     },
     suggestedChambers: {
       type: chamberConnection,
