@@ -669,11 +669,61 @@ const AttemptNumericAnswerSectionMutation = mutationWithClientMutationId({
   },
 });
 
+const UpdateViewerEmailMutation = mutationWithClientMutationId({
+  name: 'UpdateViewerEmail',
+  inputFields: {
+    id: { type: new GraphQLNonNull(GraphQLID) },
+    email: { type: GraphQLString },
+  },
+  outputFields: {
+    viewer: {
+      type: userType,
+      resolve: viewer => viewer,
+    },
+  },
+  mutateAndGetPayload: ({ id, email }, { rootValue }) => {
+    const localUserId = parseInt(fromGlobalId(id).id, 10);
+    if (!rootValue.currentUser || rootValue.currentUser.id !== localUserId) {
+      throw new Error('403 - Authorization required');
+    }
+
+    rootValue.currentUser.email = email; // eslint-disable-line no-param-reassign
+    return rootValue.currentUser.save().then(() => rootValue.currentUser);
+  },
+});
+
+const UpdateViewerNameMutation = mutationWithClientMutationId({
+  name: 'UpdateViewerName',
+  inputFields: {
+    id: { type: new GraphQLNonNull(GraphQLID) },
+    name: { type: GraphQLString },
+  },
+  outputFields: {
+    viewer: {
+      type: userType,
+      resolve: viewer => viewer,
+    },
+  },
+  mutateAndGetPayload: ({ id, name }, { rootValue }) => {
+    const localUserId = parseInt(fromGlobalId(id).id, 10);
+    if (!rootValue.currentUser || rootValue.currentUser.id !== localUserId) {
+      throw new Error('403 - Authorization required');
+    }
+
+    rootValue.currentUser.name = name; // eslint-disable-line no-param-reassign
+    return rootValue.currentUser.save().then(() => rootValue.currentUser);
+  },
+});
+
 const mutationType = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
     attemptMarkdownSection: AttemptMarkdownSectionMutation,
     attemptNumericAnswerSection: AttemptNumericAnswerSectionMutation,
+
+    // user settings, these are here so that they can be recomposed easily
+    updateViewerEmail: UpdateViewerEmailMutation,
+    updateViewerName: UpdateViewerNameMutation,
   }),
 });
 
