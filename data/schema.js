@@ -30,6 +30,7 @@ import Db from './database';
 let userType; let chamberType; let sectionInterface;
 
 let chamberStatusType;
+let userRoleType;
 
 // Section types
 let markdownSectionType; // eslint-disable-line no-unused-vars
@@ -88,6 +89,15 @@ const { nodeInterface, nodeField } = nodeDefinitions(
 * Type definitions
 */
 
+userRoleType = new GraphQLEnumType({
+  name: 'UserRoleType',
+  values: {
+    STUDENT: { value: 'STUDENT' },
+    CURATOR: { value: 'CURATOR' },
+    ADMIN: { value: 'ADMIN' },
+  },
+});
+
 userType = new GraphQLObjectType({
   name: 'User',
   description: 'A person who uses our app',
@@ -106,6 +116,11 @@ userType = new GraphQLObjectType({
       type: GraphQLString,
       description: "The User's email",
       resolve: user => user.email,
+    },
+    role: {
+      type: userRoleType,
+      description: "The User's role on the site.",
+      resolve: user => user.role,
     },
     suggestedChambers: {
       type: chamberConnection,
@@ -157,7 +172,7 @@ chamberType = new GraphQLObjectType({
     },
     status: {
       type: chamberStatusType,
-      description: `The status of a learner's efforts on a chamber`,
+      description: `The status of a student's efforts on a chamber`,
       resolve: (chamber, __, { rootValue: { currentUser } }) =>
         chamber.getSections().then(sections =>
           Promise.all(sections.map(section =>
@@ -220,7 +235,7 @@ answerInterface = new GraphQLInterfaceType({
 
 tokenAnswerType = new GraphQLObjectType({
   name: 'TokenAnswer',
-  description: `An answer indicating that the learner has marked the section
+  description: `An answer indicating that the student has marked the section
                 as complete, requiring no real work.`,
   interfaces: [answerInterface],
   fields: () => ({

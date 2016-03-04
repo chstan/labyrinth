@@ -33,6 +33,14 @@ const User = sequelize.define('user', {
     type: Sequelize.DATE,
     defaultValue: Sequelize.NOW,
   },
+  role: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    defaultValue: 'STUDENT',
+    validate: {
+      isIn: [['STUDENT', 'CURATOR', 'ADMIN']],
+    },
+  },
   passwordHash: {
     type: Sequelize.STRING,
   },
@@ -161,8 +169,14 @@ AnswerAttempt.belongsTo(AnswerSet, { as: 'answerSet' });
 
 sequelize.sync({ force: true }).then(() => {
   User.create({
+    name: 'Administrator',
+    email: 'admin@admin.com',
+    role: 'ADMIN',
+  }).then(admin => admin.setPassword('password'));
+  User.create({
     name: 'Primary User',
     email: 'primary@email.com',
+    role: 'CURATOR',
   }).then(primaryUser => {
     primaryUser.setPassword('password');
     primaryUser.createCurated({
