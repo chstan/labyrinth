@@ -49,6 +49,7 @@
     "react-relay": "0.7.0",
     "react-router": "^2.0.0-rc5",
     "react-select": "^0.9.1",
+    "react-ux-password-field": "^0.9.10",
     "sass-loader": "^3.1.2",
     "sequelize": "^3.18.0",
     "sequelize-cli": "^2.3.1",

@@ -3,6 +3,7 @@
 import React from 'react';
 import Formsy from 'formsy-react';
 import ReactSelect from 'react-select';
+import ReactUXPassword from 'react-ux-password-field';
 import _ from 'lodash';
 
 import './Inputs.scss';
@@ -16,6 +17,48 @@ class SimpleControls extends React.Component {
     );
   }
 }
+
+const PasswordInput = React.createClass({ // eslint-disable-line react/prefer-es6-class
+  propTypes: {
+    strengthBar: React.PropTypes.bool,
+    id: React.PropTypes.string.isRequired,
+    title: React.PropTypes.string.isRequired,
+    name: React.PropTypes.string.isRequired,
+  },
+
+  mixins: [Formsy.Mixin],
+
+  getDefaultProps() {
+    return {
+      strengthBar: true,
+    };
+  },
+
+  changeValue(value) {
+    this.setValue(value);
+  },
+
+  render() {
+    const classes = [
+      'input-group',
+      this.props.className,
+      this.showRequired() ? 'required' : '',
+      this.showError() ? 'error' : '',
+    ];
+    const className = _.join(_.filter(classes), ' ');
+    const errorMessage = this.getErrorMessage();
+
+    return (
+      <div className={className}>
+        <label htmlFor={this.props.id}>{this.props.title}</label>
+        <ReactUXPassword id={this.props.id} unMaskTime={800} onChange={this.changeValue}
+          value={this.getValue()} name={this.props.name} infoBar={this.props.strengthBar}
+        />
+        <span className="validation-error">{ errorMessage }</span>
+      </div>
+    );
+  },
+});
 
 const Select = React.createClass({ // eslint-disable-line react/prefer-es6-class
   propTypes: {
@@ -94,6 +137,7 @@ const SimpleInput = React.createClass({ // eslint-disable-line
 });
 
 export {
+  PasswordInput,
   SimpleInput,
   SimpleControls,
   Select,
