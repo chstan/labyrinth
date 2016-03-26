@@ -7,6 +7,7 @@ import { RelayRouter } from 'react-router-relay';
 
 import Welcome from './components/Welcome';
 import Login from './components/Login';
+import RegistrationPage from './components/RegistrationPage';
 import SuggestedChambersPage from './components/SuggestedChambersPage';
 
 import ChamberPage from './components/ChamberPage';
@@ -35,6 +36,7 @@ ReactDOM.render(
   <RelayRouter history={browserHistory}>
     <Route path="/" component={Welcome}>
       <Route path="login" component={Login} />
+      <Route path="signup" component={RegistrationPage} />
       <Route path="learn" component={SuggestedChambersPage} queries={AppQueries} />
       <Route path="learn/chamber/:chamberId/:chamberName/:sectionId/:sectionName"
         component={ChamberPage} queries={ChamberQueries}
