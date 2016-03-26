@@ -81,7 +81,7 @@ appServer.listen(APP_PORT, () => console.log( // eslint-disable-line no-console
 
 appServer.post('/auth',
 passport.authenticate('local', {
-  successRedirect: '/test',
+  successRedirect: '/profile',
   failureRedirect: '/login',
 }));
 
