@@ -15,20 +15,20 @@ import './ChamberPage.scss';
 
 class ChamberPage extends React.Component {
   render() {
-    const router = this.context.router;
     const indexOfCurrent = _.findIndex(this.props.chamber.sections, {
       dbId: parseInt(this.props.params.sectionId, 10),
     });
     const chamber = this.props.chamber;
     const nextSection = _.get(chamber.sections, indexOfCurrent + 1);
     const navigateToNextSection = () => {
+      let pathname;
       if (nextSection) {
-        const pathname = routerUtils.forAttemptsSection(chamber, nextSection);
-        router.push({ pathname });
+        pathname = routerUtils.forAttemptsSection(chamber, nextSection);
       } else {
         // TODO this should go somewhere more interesting
-        router.push('/');
+        pathname = '/';
       }
+      this.context.router.push({ pathname });
     };
     return (
 

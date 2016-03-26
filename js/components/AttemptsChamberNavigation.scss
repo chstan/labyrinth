@@ -1,4 +1,6 @@
 @import '../../scss/color';
+@import '../../scss/layout';
+@import '../../scss/shadow';
 
 .sidenav > ul {
   margin: 0;
@@ -15,4 +17,6 @@
 
 .sidenav {
   border-right: 1px solid $gray;
+  @include box-shadow(0, 0, 2px, $gray);
+  z-index: $layerUI - 1;
 }
