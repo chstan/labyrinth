@@ -325,7 +325,7 @@ curatorValidatedAnswerSectionType = new GraphQLObjectType({
   name: 'CuratorValidatedAnswerSection',
   description: 'A section that contains a question validated by the chamber curator',
   interfaces: [sectionInterface],
-  isTypeOf: section => section.kind === 'curatorValidatedSection',
+  isTypeOf: section => section.kind === 'curatorValidatedAnswer',
   fields: () => ({
     id: globalIdField(),
     dbId: {
