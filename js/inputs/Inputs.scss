@@ -4,7 +4,6 @@
 @import '../../scss/transition';
 
 form {
-
   @include card;
   background-color: $grayLighter;
 
@@ -35,6 +34,18 @@ form {
     width: 100px;
   }
 
+  &.-with-header {
+    display: flex;
+    flex-direction: column;
+    > * {
+      width: 100%;
+    }
+
+    > label {
+      border-bottom: 1px solid $gray;
+      margin-bottom: 12px;
+    }
+  }
 }
 
 .controls.form-controls {
@@ -43,4 +54,10 @@ form {
   > *:first-child {
     margin-left: auto;
   }
+}
+
+.label.header {
+  display: block;
+  width: 100%;
+  border-bottom: 1px solid $gray;
 }

@@ -1,5 +1,8 @@
+/* eslint-disable react/no-multi-comp */
+
 import React from 'react';
 import Formsy from 'formsy-react';
+import ReactSelect from 'react-select';
 import _ from 'lodash';
 
 import './Inputs.scss';
@@ -13,6 +16,49 @@ class SimpleControls extends React.Component {
     );
   }
 }
+
+const Select = React.createClass({ // eslint-disable-line react/prefer-es6-class
+  propTypes: {
+    id: React.PropTypes.string.isRequired,
+    title: React.PropTypes.string.isRequired,
+    name: React.PropTypes.string.isRequired,
+    multiple: React.PropTypes.bool,
+    options: React.PropTypes.array.isRequired,
+  },
+
+  mixins: [Formsy.Mixin],
+
+  changeValue(value, selectedOptions) {
+    if (this.props.multiple) {
+      this.setValue(selectedOptions.map(o => o.value));
+    } else {
+      this.setValue(value);
+    }
+  },
+
+  render() {
+    const classes = [
+      'input-group',
+      this.props.className,
+      this.showRequired() ? 'required' : '',
+      this.showError() ? 'error' : '',
+    ];
+    const className = _.join(_.filter(classes), ' ');
+    const errorMessage = this.getErrorMessage();
+
+    return (
+      <div className={className}>
+        <label htmlFor={this.props.id}>{this.props.title}</label>
+        <ReactSelect ref="select" id={this.props.id}
+          name={this.props.name} multi={this.props.multiple}
+          onChange={this.changeValue} value={this.getValue()}
+          options={this.props.options}
+        />
+        <span className="validation-error">{errorMessage}</span>
+      </div>
+    );
+  },
+});
 
 const SimpleInput = React.createClass({ // eslint-disable-line
   mixins: [Formsy.Mixin],
@@ -50,4 +96,5 @@ const SimpleInput = React.createClass({ // eslint-disable-line
 export {
   SimpleInput,
   SimpleControls,
+  Select,
 };
