@@ -1,8 +1,8 @@
 import React from 'react';
 import Relay from 'react-relay';
-import { Link } from 'react-router';
 
 import svgs from './SVGs';
+import { NavItem } from './Pure';
 
 import routerUtils from '../utils/router';
 
@@ -33,12 +33,9 @@ class SectionNavItem extends React.Component {
     const classNames = `section-nav-item ${this.props.active ? 'active' : ''}`;
 
     return (
-      <Link to={ navUrl } className={ classNames }>
-        <span className={ iconClasses }>
-          { statusIcon.icon }
-        </span>
-        { this.props.section.name }
-      </Link>
+      <NavItem href={ navUrl} className={ classNames } icon={ statusIcon.icon }
+        iconClassName={ iconClasses } content={ this.props.section.name }
+      />
     );
   }
 }

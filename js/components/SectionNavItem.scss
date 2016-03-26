@@ -37,4 +37,31 @@
   .icon.completed path {
     stroke: green !important;
   }
+
+  strong {
+    font-weight: 500;
+  }
+
+  &.primary {
+    font-size: 20px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid $grayDark;
+  }
+
+  .icon {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &.action {
+    background-color: $accentBlue;
+    color: white;
+    .icon {
+      margin-right: 8px;
+    }
+    .icon > svg path {
+      fill: white !important;
+      stroke: white !important;
+    }
+  }
 }
