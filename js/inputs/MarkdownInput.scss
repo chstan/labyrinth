@@ -1,0 +1,41 @@
+@import '../../scss/color';
+@import '../../scss/shadow';
+
+.markdown-input {
+  @include box-shadow(0, 0, 2px, $gray);
+  border: 1px solid $gray;
+
+  display: flex;
+  flex-direction: row;
+
+  > * {
+    padding: 8px;
+    width: 100%;
+    overflow-y: scroll;
+  }
+
+  &.inline {
+    max-width: 600px;
+  }
+
+  > textarea {
+    font-weight: 300;
+    font-size: 18px;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  > .markdown {
+    background-color: rgba(0, 0, 0, 0.08);
+  }
+
+  &.vertical {
+    flex-direction: column;
+  }
+
+  &.vertical > textarea {
+    border-bottom: 1px solid $gray;
+  }
+
+  &.horizontal > textarea {
+    border-right: 1px solid $gray;
+  }
+}
