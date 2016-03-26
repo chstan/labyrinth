@@ -6,7 +6,7 @@ class MarkdownSection extends React.Component {
   render() {
     return (
       <section>
-      <ReactMarkdown source={ this.props.section.markdown }/>
+      <ReactMarkdown className="markdown" source={ this.props.section.markdown }/>
       </section>
     );
   }
