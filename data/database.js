@@ -59,9 +59,10 @@ const User = sequelize.define('user', {
     setPassword(password) {
       const user = this;
       const SALT_LENGTH = 8;
-      bcrypt.hash(password, SALT_LENGTH, (err, hash) => {
+      // lift bcrypt.hash so we can continue computation with a promise
+      return q.nfcall(bcrypt.hash, password, SALT_LENGTH).then(hash => {
         user.passwordHash = hash;
-        user.save();
+        return user.save();
       });
     },
     canCreateChamber() {
