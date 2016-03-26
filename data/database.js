@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 import bcrypt from 'bcrypt';
 import secrets from '../secrets.json';
+import q from 'q'; // promise wrapping
 
 const sequelize = new Sequelize(
   secrets.database.database, secrets.database.user, secrets.database.password, {
@@ -62,6 +63,30 @@ const User = sequelize.define('user', {
         user.passwordHash = hash;
         user.save();
       });
+    },
+    canCreateChamber() {
+      return Promise.resolve(['CURATOR', 'ADMIN'].find(role => role === this.role));
+    },
+    canCreateSection(chamber) {
+      if (this.role === 'ADMIN') {
+        return Promise.resolve(true);
+      }
+      if (this.role === 'CURATOR') {
+        return this.getCurated({ where: { id: chamber.id } }).then(c => Boolean(c.length));
+      }
+      return Promise.resolve(false);
+    },
+    canEditChamber(chamber) {
+      return Promise.resolve(chamber.curatorId === this.id);
+    },
+    canEditSection(section) {
+      if (this.role === 'ADMIN') return true;
+      if (this.role !== 'CURATOR') return false;
+
+      const user = this;
+      return q(section).then(s => s.getChamber()).then(chamber =>
+        chamber.userId === user.id // TODO figure out WTF sequelize is doing
+      );
     },
   },
 });
