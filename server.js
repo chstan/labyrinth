@@ -18,6 +18,28 @@ import secrets from './secrets';
 const RedisStore = connectRedis(expressSession);
 
 // ========== PASSPORT ===============
+passport.use('local-signup', new PassportLocal.Strategy({
+  usernameField: 'email',
+  passwordField: 'password',
+  passReqToCallback: true,
+}, (req, email, password, done) => {
+  Db.models.user.findOne({ where: { email } }).then(user => {
+    if (user) {
+      // user is already taken, reject signup
+      // this response leaks information, but we can meter signup
+      return done(null, false, { message: 'Email is already taken.' });
+    }
+
+    // the username isn't taken, so we can create a user for them and log in
+    Db.models.user.create({
+      name: req.body.name,
+      email,
+    })
+    .then(u => u.setPassword(password))
+    .then(u => done(null, u));
+  });
+}));
+
 passport.use(new PassportLocal.Strategy({
   usernameField: 'email',
   passwordField: 'password',
@@ -85,6 +107,13 @@ passport.authenticate('local', {
   failureRedirect: '/login',
 }));
 
+appServer.post('/register',
+passport.authenticate('local-signup'),
+  (req, res) => {
+    res.sendStatus(200);
+  }
+);
+
 appServer.post('/revoke',
 (req, res) => {
   req.logout();
@@ -132,6 +161,7 @@ const webpackProxyApp = new WebpackDevServer(compiler, {
   proxy: {
     '/graphql': `http://localhost:${APP_PORT}/graphql`,
     '/auth': `http://localhost:${APP_PORT}`,
+    '/register': `http://localhost:${APP_PORT}`,
     '/revoke': `http://localhost:${APP_PORT}/revoke`,
   },
   publicPath: '/js/',
