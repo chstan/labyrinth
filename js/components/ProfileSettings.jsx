@@ -69,8 +69,6 @@ class ProfileSettings extends React.Component {
               <button type="submit" className="button">Submit</button>
             </SimpleControls>
           </Form>
-          <div className="input-group">{ this.props.viewer.email }</div>
-          <div className="controls">controls</div>
         </div>
       </div>
     );
