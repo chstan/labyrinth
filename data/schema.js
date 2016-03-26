@@ -3,6 +3,7 @@ import {
   GraphQLEnumType,
   GraphQLInt,
   GraphQLID,
+  GraphQLInputObjectType,
   GraphQLInterfaceType,
   GraphQLFloat,
   GraphQLList,
@@ -21,6 +22,8 @@ import {
   mutationWithClientMutationId,
   nodeDefinitions,
 } from 'graphql-relay';
+
+import _ from 'lodash';
 
 import Db from './database';
 
@@ -545,10 +548,94 @@ const queryType = new GraphQLObjectType({
   }),
 });
 
-/**
-* This is the type that will be the root of our mutations,
-* and the entry point into performing writes in our schema.
-*/
+// ================ MUTATIONS ==================
+
+// GraphQL currently supports no input type/mutation polymorphism
+// which is a bit unfortunate, but is probably something that will
+// clear up at some point in the future, for now, we just have to
+// define a whole bunch of input types or concede on typing entirely.
+// I'm planning on relying quite a bit on being able to define the
+// types and mutations largely via helpers, depending on any incident
+// complexity
+const markdownSectionInputType = new GraphQLInputObjectType({
+  name: 'MarkdownSectionInput',
+  fields: {
+    id: { type: new GraphQLNonNull(GraphQLID) },
+    name: { type: GraphQLString },
+    markdown: { type: GraphQLString },
+  },
+});
+
+const curatorValidatedAnswerSectionInputType = new GraphQLInputObjectType({
+  name: 'CuratorValidatedAnswerSectionInput',
+  fields: {
+    id: { type: new GraphQLNonNull(GraphQLID) },
+    name: { type: GraphQLString },
+    exposition: { type: GraphQLString },
+    question: { type: GraphQLString },
+  },
+});
+
+const numericAnswerSectionInputType = new GraphQLInputObjectType({
+  name: 'NumericAnswerSectionInput',
+  fields: {
+    id: { type: new GraphQLNonNull(GraphQLID) },
+    name: { type: GraphQLString },
+    exposition: { type: GraphQLString },
+    question: { type: GraphQLString },
+    answer: { type: GraphQLString },
+  },
+});
+
+// factory for update section mutations
+function updateSectionMutation(inputType, mutationName, kind) {
+  return mutationWithClientMutationId({
+    name: mutationName,
+    inputFields: {
+      section: { type: inputType },
+    },
+    outputFields: {
+      section: {
+        type: sectionInterface,
+        resolve: ({ section }) => section,
+      },
+    },
+    mutateAndGetPayload: ({ section }, { rootValue }) => {
+      if (!rootValue.currentUser) {
+        throw new Error('403 - Authorization required');
+      }
+
+      const { id, name } = section;
+      const sectionDbId = parseInt(fromGlobalId(id).id, 10);
+      const content = _.omit(section, ['id', 'name']);
+      const dbSection = Db.models.section.findOne({ where: { id: sectionDbId } });
+      return rootValue.currentUser.canEditSection(dbSection).then(isAllowed => {
+        if (isAllowed) {
+          return {
+            section: dbSection.then(s => s.update({
+              kind,
+              name,
+              content,
+            })),
+          };
+        }
+        return { section: null };
+      });
+    },
+  });
+}
+
+const updateSectionMutations = _.mapValues({
+  updateMarkdownSection: [markdownSectionInputType, 'UpdateMarkdownSection', 'markdown'],
+  updateCuratorValidatedAnswerSection: [
+    curatorValidatedAnswerSectionInputType, 'UpdateCuratorValidatedAnswerSection',
+    'curatorValidatedAnswer',
+  ],
+  updateNumericAnswerSection: [
+    numericAnswerSectionInputType, 'UpdateNumericAnswerSection', 'numericAnswer',
+  ],
+}, s => updateSectionMutation(...s));
+
 const AttemptMarkdownSectionMutation = mutationWithClientMutationId({
   name: 'AttemptMarkdownSection',
   inputFields: {
@@ -715,16 +802,94 @@ const UpdateViewerNameMutation = mutationWithClientMutationId({
   },
 });
 
+const AddSectionMutation = mutationWithClientMutationId({
+  name: 'AddSection',
+  inputFields: {
+    chamberId: { type: new GraphQLNonNull(GraphQLID) },
+    name: { type: GraphQLString },
+    kind: { type: GraphQLString },
+  },
+  outputFields: {
+    newSection: {
+      type: sectionInterface,
+      resolve: ({ newSection }) => newSection,
+    },
+    chamber: {
+      type: chamberType,
+      resolve: ({ chamber }) => chamber,
+    },
+  },
+  mutateAndGetPayload: ({ chamberId, name, kind }, { rootValue }) => {
+    if (!rootValue.currentUser) {
+      throw new Error('403 - Authorization required');
+    }
+
+    const id = parseInt(fromGlobalId(chamberId).id, 10);
+    const chamber = Db.models.chamber.findOne({ where: { id } });
+
+    return rootValue.currentUser.canCreateSection({ id }).then(allowed => {
+      if (allowed) {
+        return chamber.then(c => c.createSection({
+          kind,
+          name,
+        }));
+      }
+      return Promise.resolve(null);
+    }).then(s => ({
+      chamber,
+      newSection: s,
+    }));
+  },
+});
+
+const AddChamberMutation = mutationWithClientMutationId({
+  name: 'AddChamber',
+  inputFields: {
+    name: { type: GraphQLString },
+  },
+  outputFields: {
+    viewer: {
+      type: userType,
+      resolve: ({ viewer }) => viewer,
+    },
+    newChamber: {
+      type: chamberType,
+      resolve: ({ newChamber }) => newChamber,
+    },
+  },
+  mutateAndGetPayload: ({ name }, { rootValue }) => {
+    if (!rootValue.currentUser) {
+      throw new Error('403 - Authorizataion required');
+    }
+    return rootValue.currentUser.canCreateChamber().then(allowed => {
+      if (allowed) {
+        return rootValue.currentUser.createCurated({ name });
+      }
+      return Promise.resolve(null);
+    }).then(newChamber => ({
+      viewer: rootValue.currentUser,
+      newChamber,
+    }));
+  },
+});
+
 const mutationType = new GraphQLObjectType({
   name: 'Mutation',
-  fields: () => ({
+  fields: () => _.merge({
     attemptMarkdownSection: AttemptMarkdownSectionMutation,
     attemptNumericAnswerSection: AttemptNumericAnswerSectionMutation,
 
     // user settings, these are here so that they can be recomposed easily
     updateViewerEmail: UpdateViewerEmailMutation,
     updateViewerName: UpdateViewerNameMutation,
-  }),
+
+    // chamber related
+    addChamber: AddChamberMutation,
+    addSection: AddSectionMutation,
+
+    // update sections: currently have no input polymorphism,
+    // so we inject a bunch of different mutations
+  }, updateSectionMutations),
 });
 
 /**
